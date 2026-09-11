@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_category_appearance">
+        <ListPreference
+            android:key="theme_mode"
+            android:title="@string/pref_theme_title"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="AUTO" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_feedback">
+        <SwitchPreferenceCompat
+            android:key="sound_enabled"
+            android:title="@string/pref_sound_title"
+            android:defaultValue="false" />
+        <SwitchPreferenceCompat
+            android:key="vibration_enabled"
+            android:title="@string/pref_vibration_title"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="key_popup_enabled"
+            android:title="@string/pref_popup_title"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_typing">
+        <SwitchPreferenceCompat
+            android:key="suggestions_enabled"
+            android:title="@string/pref_suggestions_title"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

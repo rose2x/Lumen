@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Lumen Keyboard</string>
+    <string name="subtype_en_us">English (US)</string>
+    <string name="settings_title">Lumen Keyboard Settings</string>
+
+    <string name="main_title">Lumen Keyboard</string>
+    <string name="main_subtitle">A fast, elegant keyboard with a clean, professional design.</string>
+    <string name="btn_enable">1. Enable in System Settings</string>
+    <string name="btn_switch">2. Switch to Lumen Keyboard</string>
+    <string name="btn_customize">Customize Appearance</string>
+
+    <string name="pref_category_appearance">Appearance</string>
+    <string name="pref_category_feedback">Feedback</string>
+    <string name="pref_category_typing">Typing</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_sound_title">Key sounds</string>
+    <string name="pref_vibration_title">Key vibration</string>
+    <string name="pref_popup_title">Key preview popup</string>
+    <string name="pref_suggestions_title">Word suggestions</string>
+</resources>

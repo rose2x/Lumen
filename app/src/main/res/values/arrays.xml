@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="theme_entries">
+        <item>Follow system</item>
+        <item>Light</item>
+        <item>Dark</item>
+        <item>AMOLED black</item>
+    </string-array>
+    <string-array name="theme_values">
+        <item>AUTO</item>
+        <item>LIGHT</item>
+        <item>DARK</item>
+        <item>AMOLED</item>
+    </string-array>
+</resources>

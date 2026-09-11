@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.Lumen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/lumen_primary</item>
+        <item name="colorPrimaryDark">@color/lumen_primary_dark</item>
+        <item name="colorAccent">@color/lumen_primary</item>
+    </style>
+</resources>
