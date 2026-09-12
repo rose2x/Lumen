@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_terminal.xml
+    Layout: terminal display fills available space, a row of extra keys
+    (Ctrl, Tab, Esc, arrows) docks at the bottom — these keys don't exist
+    on a phone's soft keyboard but are essential for real terminal use
+    (Ctrl+C, Ctrl+D, Tab-completion, vim's Esc, etc.), exactly like Termux
+    provides. A status overlay floats on top during first-time setup.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D0D0D">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#161616"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/sessionTabsRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp" />
+
+        </HorizontalScrollView>
+
+        <com.vironix.app.TerminalView
+            android:id="@+id/terminalView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="8dp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#161616"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/extraKeysRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp" />
+
+        </HorizontalScrollView>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="24dp"
+        android:textColor="#00FF41"
+        android:textSize="16sp"
+        android:fontFamily="monospace"
+        android:visibility="gone"
+        android:text="" />
+
+</FrameLayout>

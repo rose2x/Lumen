@@ -1,22 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!--
+    AndroidManifest.xml
+    This is the "ID card" of the app: it tells Android what permissions
+    we need, what screens (Activities) and background services exist,
+    and basic app metadata.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Needed to download the Alpine rootfs on first launch -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Keeps the shell session alive while the app is backgrounded -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Lets the shell read/write your phone's normal files (photos,
+         downloads, etc.) via ~/storage symlinks, the same mechanism
+         Termux's own termux-setup-storage command uses. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Lumen"
-        android:supportsRtl="true">
+        android:theme="@style/Theme.Vironix"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false">
 
+        <!-- App entry point: pick a distro (and see root/no-root status) first. -->
         <activity
-            android:name=".MainActivity"
+            android:name=".DistroPickerActivity"
             android:exported="true"
-            android:theme="@style/Theme.Lumen">
+            android:theme="@style/Theme.Vironix">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -24,39 +46,22 @@
         </activity>
 
         <activity
-            android:name=".SettingsActivity"
-            android:exported="true"
-            android:label="@string/settings_title"
-            android:theme="@style/Theme.Lumen" />
+            android:name=".TerminalActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".VoicePermissionActivity"
+            android:name=".SettingsActivity"
             android:exported="false"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:excludeFromRecents="true" />
+            android:label="Settings" />
 
+        <!-- Keeps the proot session running even if the screen is off
+             or the user switches apps, same approach Termux uses. -->
         <service
-            android:name=".LumenInputMethodService"
-            android:permission="android.permission.BIND_INPUT_METHOD"
-            android:exported="true"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.view.InputMethod" />
-            </intent-filter>
-            <meta-data
-                android:name="android.view.im"
-                android:resource="@xml/method" />
-        </service>
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:name=".TerminalService"
             android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+            android:foregroundServiceType="specialUse" />
 
     </application>
 </manifest>

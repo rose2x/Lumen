@@ -1,0 +1,92 @@
+// app/build.gradle
+// This configures the actual Android app: what SDK versions it targets,
+// how to compile the native (C) code that runs the terminal, and what
+// libraries it depends on.
+
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+android {
+    namespace = "com.vironix.app"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.vironix.app"
+        minSdk = 24          // Android 7.0+ (proot needs a reasonably modern kernel)
+        targetSdk = 34
+        versionCode = 3
+        versionName = "0.3.0"
+
+        // ndk.abiFilters restricts which CPU architectures we build native code for.
+        // arm64-v8a covers almost all modern Android phones.
+        // armeabi-v7a covers older/budget devices.
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags += ""
+                arguments += listOf("-DANDROID_STL=c++_shared")
+            }
+        }
+    }
+
+    // Points Gradle at our CMakeLists.txt, which compiles the native
+    // terminal/PTY code in app/src/main/jni/
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/jni/CMakeLists.txt")
+            version = "3.22.1"
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
+            isDebuggable = true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    // Ensures any bundled tarball/binary assets aren't re-compressed by
+    // the APK packer, which would waste build time (rootfs archives are
+    // downloaded at runtime, not bundled, but this is a safe default).
+    androidResources {
+        noCompress += listOf("tar.gz", "tar.xz", "bin")
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    // Distro picker list (Alpine / Ubuntu / Debian / Arch)
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // Pure-Java XZ decompression. Needed because the JVM has no built-in
+    // support for .tar.xz archives, and Ubuntu/Debian's official rootfs
+    // tarballs are shipped in that format. This is the same small,
+    // well-established library (by the creator of the XZ format's
+    // reference Java port) used by many Android/Java tools.
+    implementation("org.tukaani:xz:1.9")
+}

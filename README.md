@@ -1,216 +1,182 @@
-# Lumen Keyboard
+# Vironix
 
-A full-featured Android keyboard (IME), aiming for real Gboard-level feature
-parity, built natively — no cross-platform wrapper, no third-party keyboard
-SDK, no paid services. Everything in it is free, including the bundled fonts
-and every dependency, which matters since this is meant for a public release.
+A from-scratch Android terminal app that gives you a **real Linux
+environment** with a genuine package manager, with support for multiple
+distributions and automatic root detection — built and documented so you
+can learn how it works, not just use it.
 
-## Language: Kotlin + a little Java, on purpose
+## How it works
 
-The app is primarily **Kotlin** (the modern, official language for native
-Android — null-safety, far less boilerplate, and it's what the interactive
-UI/state-machine code benefits most from). Two small, self-contained
-**Java** utility classes are included as well:
+Android doesn't ship a full Linux userland or root access by default. Vironix
+uses the same approach several established "Linux on Android" projects use,
+extended in two directions: **distro choice** and **root-aware execution**.
 
-- `LevenshteinUtil.java` — the edit-distance algorithm used by autocorrect
-- `FileCopyUtils.java` — stream-to-file copying, used when importing a
-  custom font or background image
+### 1. Choose your distro
 
-Kotlin calls into both with zero glue code — that's normal Kotlin/Java
-interop, not a special integration. They're kept as plain static utilities
-(not stateful classes) since that's the lowest-risk place to mix languages
-in one project.
+On first launch you pick one of:
 
-## Features
+| Distro | Package manager | Upstream source |
+|---|---|---|
+| Alpine Linux | `apk` | Alpine's official minirootfs |
+| Ubuntu 24.04 LTS | `apt` | Canonical's official cloud-image rootfs |
+| Debian 12 (Bookworm) | `apt` | Debian's official docker-brew rootfs |
+| Arch Linux ARM | `pacman` | Arch Linux ARM (the real, separate ARM build of Arch — mainline Arch has no official ARM builds) |
 
-**Typing**
-- Custom-drawn keyboard (own `Canvas` `View`, not the deprecated `KeyboardView` API)
-- Swipe (gesture) typing, matched against the offline dictionary
-- Real autocorrect (not just suggestions), with backspace-to-undo right after
-- Long-press accents & numbers (drag to pick, like Gboard)
-- Smart Shift (tap = one capital, double-tap = Caps Lock), auto-repeat Backspace
-- **Drag left on Backspace to delete whole words**; **drag on the space bar to move the cursor**
-- **Long-press Space to open the system keyboard switcher** (works like a language/keyboard-switch key)
-- Adaptive Enter key (Go / Search / Send / Next / Done)
-- Optional permanent number row
-- Word suggestion bar (offline)
+Each is the **exact, unmodified official rootfs archive** that distro
+publishes for servers/containers. Once extracted, `apt install git` /
+`apk add git` / `pacman -S git` are genuinely that distro's real package
+manager doing real work — not a reimplementation.
 
-**Input extras**
-- Voice typing — tap the mic icon; uses Android's built-in `SpeechRecognizer`,
-  no account, no extra app, no paid API
-- Clipboard manager — auto-saved history, tap to paste, × to delete
-- GIF search — real animated GIFs via Tenor's free tier, inserted with
-  Android's `commitContent` rich-content API (same mechanism Gboard uses)
-- Emoji panel
+### 2. Root-aware execution
 
-**Appearance**
-- Light / Dark / AMOLED black / Follow-system themes, 6 accent-color presets
-- **Custom fonts** — 5 bundled free (OFL-licensed) Google Fonts, or import
-  any `.ttf` from your device
-- **Custom background image** behind the keys
-- Resizable keyboard height (80%–130%)
-- Key sound (3 styles) + haptic feedback, independently toggleable
+On launch, `RootDetector` actually tests (not just guesses) whether the
+device has working root access, by running `su -c id` and checking for
+`uid=0` in the output:
 
-**Layouts**
-- One-handed mode (anchors to left/right edge, quick on-keyboard button to restore)
-- **Split keyboard** for tablets (two-thumb typing; letters split to both
-  edges with a gap in the middle, common rows like space/enter stay full-width)
-- Symbols & extended-symbols pages (`?123` / `=\<`)
+- **Rooted device** → Vironix uses `su -c "chroot <rootfs> ..."` — a real
+  kernel-level `chroot`. Faster, and avoids the handful of syscalls `proot`
+  can't perfectly emulate.
+- **Non-rooted device** → Vironix falls back to **proot**, which fakes
+  chroot/root behavior via `ptrace`, entirely in userspace. No special
+  permissions needed, works on any Android device.
 
-## Two honest scope notes
+Both paths land you in the same place: a real interactive shell inside the
+distro you picked.
 
-**"Split", not "floating."** True floating/draggable IME windows are one of
-the most version-fragile corners of the Android IME API. Split mode gives
-real two-thumb tablet ergonomics without that fragility. A draggable
-floating window is a reasonable future enhancement if you want to take it on.
+### 3. Real terminal emulation — true color, alt-screen, mouse, scroll regions
 
-**GIF search keeps your keys visible and redirects typing into the search
-box**, instead of hiding the keyboard behind a search field. Since this app
-*is* the system input method, it can't pop up a second keyboard to type into
-its own search UI — so typing while GIF search is open updates the query
-instead of the target app. Clipboard/Emoji panels don't need typing, so they
-swap in for the keyboard entirely, like Gboard's panels do.
+Vironix has an actual VT100/xterm-class terminal emulator (`terminal/TerminalEmulator.kt`),
+separated from the Android rendering code (`TerminalView.kt`) — the same
+split real terminal emulators use:
 
-## Everything here is free (this matters for a public release)
+- Full 16/256-color **and 24-bit true color** ANSI support (`ls --color`,
+  colored prompts, `htop`, neovim's true-color themes, etc. all look right)
+- Bold, underline, reverse-video text attributes
+- Cursor positioning, line/screen clearing, scrolling, **scroll regions**
+  (`ESC[<top>;<bottom>r`) — used by `less`, status-bar apps, etc.
+- **Alternate screen buffer**: `vim`, `htop`, `less`, and `tmux` take over
+  the full screen and hand your shell scrollback back exactly as it was
+  when you quit — the same mechanism real terminals use
+- **Mouse reporting**: tapping the screen sends real xterm mouse-report
+  escape sequences to apps that request them (`vim` mouse mode, `tmux`
+  pane selection, etc.), both legacy and modern SGR encoding
+- A blinking cursor, with a choice of block/underline/bar style (see Settings)
+- A row of extra keys (Ctrl, Esc, Tab, arrows, Home/End) docked below the
+  screen, since phone keyboards don't have these — tap Ctrl then a letter
+  to send Ctrl+C, Ctrl+D, etc., the same interaction Termux uses
+- Screen resizing (rotation, keyboard open/close) is passed through to the
+  shell via `TIOCSWINSZ`, so `vim`/`htop`/etc. reflow correctly
 
-| Piece | License / cost |
-|---|---|
-| Kotlin, AndroidX, Material Components | Apache 2.0, free |
-| Glide (GIF image loading) | BSD/Apache 2.0, free |
-| Bundled fonts (Poppins, Nunito, Lato, JetBrains Mono, Comfortaa) | SIL Open Font License 1.1 — free for any use, including commercial. License text ships in `assets/fonts/licenses/` as OFL requires. |
-| Tenor GIF search | Free tier, no billing — you (or your users) just need a free API key |
-| Android `SpeechRecognizer` (voice typing) | Built into Android, free |
-| GitHub Actions build | Free for public repos |
+### 4. Multiple sessions (tabs)
 
-No ads, no analytics, no paid SDKs, nothing gated behind a subscription.
+Open several independent shell tabs at once, each with its own process,
+cursor, colors, and scrollback — start a build in one, run `htop` in
+another, edit a file in a third. Switching tabs is instant; background
+tabs keep running and producing output the whole time (`SessionManager.kt`).
+Tap **+** in the tab bar for a new session, tap the active tab's **×** to
+close it.
+
+### 5. Settings — fonts, color schemes, cursor style
+
+A real settings screen (`SettingsActivity.kt`): adjustable font size,
+five color schemes (Classic Green, Solarized Dark, Monokai, Dracula,
+Light), three cursor styles (block/underline/bar), and a terminal-bell
+toggle. Changes are saved immediately and apply the moment you return to
+the terminal.
+
+### 6. Shared storage access
+
+Tap "Storage access" on the main screen to grant Vironix broad file
+access, the same permission Termux's own `termux-setup-storage` requests.
+Once granted, every installed distro automatically gets a `~/storage/`
+folder full of **symlinks** into your phone's real storage
+(`StorageAccess.kt`):
+
+```
+~/storage/shared      -> /storage/emulated/0
+~/storage/dcim        -> /storage/emulated/0/DCIM
+~/storage/downloads   -> /storage/emulated/0/Download
+~/storage/pictures    -> /storage/emulated/0/Pictures
+~/storage/music       -> /storage/emulated/0/Music
+~/storage/movies      -> /storage/emulated/0/Movies
+```
+
+`cp report.pdf ~/storage/downloads/` inside the shell puts the file
+exactly where your phone's Downloads app shows it — because it's a
+symlink to that same real folder, not a copy.
 
 ## Project structure
 
 ```
-LumenKeyboard/
-├── app/src/main/java/com/lumen/keyboard/
-│   ├── LumenInputMethodService.kt   # the IME itself — state machine & InputConnection calls
-│   ├── KeyboardView.kt              # custom View: drawing, touch, gestures, split/one-handed layout
-│   ├── KeyboardTheme.kt             # theme colors per mode
-│   ├── PreferencesManager.kt        # typed SharedPreferences wrapper
-│   ├── FontManager.kt               # bundled + custom font resolution
-│   ├── BackgroundImageManager.kt    # custom background image import/storage/decoding
-│   ├── SoundFeedback.kt             # click sound + vibration
-│   ├── SuggestionBar.kt             # suggestion strip + clipboard/mic/GIF toolbar icons
-│   ├── WordDictionary.kt            # offline word list
-│   ├── AutoCorrector.kt             # autocorrect (uses LevenshteinUtil.java)
-│   ├── GestureTypingEngine.kt       # swipe-typing word matching
-│   ├── ClipboardHistoryManager.kt   # persisted clipboard history
-│   ├── ClipboardPanelView.kt        # clipboard panel UI
-│   ├── TenorApiClient.kt           # Tenor GIF search
-│   ├── GifResultsStrip.kt          # GIF results strip UI
-│   ├── VoiceBridge.kt / VoicePermissionActivity.kt / VoiceInputStrip.kt  # voice typing
-│   ├── EmojiPanelView.kt            # emoji grid
-│   ├── LevenshteinUtil.java         # (Java) edit-distance utility
-│   ├── FileCopyUtils.java           # (Java) stream-copy utility
-│   ├── MainActivity.kt              # "enable keyboard" onboarding screen
-│   ├── SettingsActivity.kt          # preferences screen, incl. font/background pickers
-│   └── model/
-│       ├── Key.kt                   # KeyDef / KeyRow / KeyboardLayout data classes
-│       └── Layouts.kt               # QWERTY (+ number row variant) + two symbol pages
-├── app/src/main/assets/fonts/       # bundled OFL fonts + their license files
-├── app/src/main/res/                # strings, colors, themes, XML layouts, adaptive icon
-├── .github/workflows/android-build.yml  # CI: builds a debug APK on every push
-└── build.gradle.kts / settings.gradle.kts / app/build.gradle.kts
+app/src/main/jni/            Native C: PTY creation, process exec (termux-pty.c)
+app/src/main/java/.../
+  RootDetector.kt             Tests for real, working root access
+  DistroCatalog.kt            Supported distros + their official rootfs URLs
+  BootstrapInstaller.kt       Downloads/extracts a chosen distro's rootfs (gzip + xz)
+  ShellLauncher.kt            Builds the chroot (rooted) or proot (unrooted) command
+  StorageAccess.kt            Requests storage permission, sets up ~/storage symlinks
+  DistroPickerActivity.kt     Entry screen: pick a distro, see root/storage status
+  DistroAdapter.kt            RecyclerView adapter for the distro list
+  SessionManager.kt           Owns all open shell tabs, each with its own emulator
+  SessionTabsBar.kt           Tappable tab-chip UI row (switch/close/new)
+  TerminalSession.kt          Kotlin <-> native JNI bridge for one shell process
+  TerminalView.kt             Renders the terminal grid, handles keyboard/mouse input
+  ExtraKeysBar.kt             Ctrl/Esc/Tab/arrow key row for phone keyboards
+  TerminalActivity.kt         Hosts the session pool + tab bar for one distro
+  TerminalService.kt          Keeps shells alive in background (foreground service)
+  TerminalPreferences.kt      Persisted settings: font size, color scheme, cursor style
+  SettingsActivity.kt         Settings screen UI
+  ColorSchemeAdapter.kt       RecyclerView adapter for the color scheme list
+  terminal/TerminalCell.kt    One character cell: char + palette/true color + style
+  terminal/TerminalEmulator.kt VT100/xterm parser: grid, alt-screen, scroll regions, mouse
+.github/workflows/build.yml   CI: builds a debug APK on every push
 ```
 
-## Build it
+## Building locally
 
-### Option A — GitHub Actions (recommended, matches how you said you build)
-1. Push this whole folder to a new GitHub repo.
-2. The included workflow (`.github/workflows/android-build.yml`) runs automatically
-   on every push to `main` — it sets up JDK 17 + the Android SDK, generates the
-   Gradle wrapper, and runs `./gradlew assembleDebug`.
-3. Open the **Actions** tab → the latest run → download the `lumen-keyboard-debug-apk`
-   artifact. That's your installable APK.
-4. To build a signed **release** APK instead, add a signing config to
-   `app/build.gradle.kts` and an `assembleRelease` step (kept to `assembleDebug`
-   by default so it builds successfully with zero secrets configured).
+Requires Android Studio (or the command-line SDK) with:
+- JDK 17
+- Android SDK 34
+- NDK 26.1.10909125
+- CMake 3.22.1
 
-### Option B — Android Studio
-1. Open the `LumenKeyboard` folder as a project (Android Studio will generate
-   the Gradle wrapper for you automatically).
-2. Run on a device/emulator, or **Build → Build Bundle(s)/APK(s) → Build APK(s)**.
+```bash
+./gradlew assembleDebug
+# APK output: app/build/outputs/apk/debug/app-debug.apk
+```
 
-Minimum supported Android version: **8.0 (API 26)**. Target/compile SDK: **34**.
+## Building via GitHub Actions
 
-### GIF search setup (optional)
+Every push to `main` (or manual trigger from the Actions tab) builds a debug
+APK automatically. Download it from the workflow run's **Artifacts** section.
 
-GIF search needs a free Tenor API key (no billing, no OAuth):
-1. Get a key at <https://tenor.com/gifapi> (Google account required).
-2. In the app, open **Customize Appearance → GIFs → Tenor API key** and paste it in.
+## Current limitations (good next steps if you want to extend it)
 
-Leave it blank and GIF search just shows a short "add a key" message instead
-of erroring — nothing else in the keyboard depends on it.
+- The terminal emulator covers the escape sequences real-world shells,
+  `vim`, `htop`, `tmux`, and package managers actually use — it is not a
+  complete xterm implementation (no bracketed-paste mode, no Sixel/image
+  graphics, no terminfo/termcap database — Vironix advertises itself as
+  `xterm-256color` which works almost everywhere but isn't a byte-perfect
+  match). See TODOs in `terminal/TerminalEmulator.kt`.
+- No app signing configured (CI produces a debug-signed APK — fine for
+  personal installs, not for Play Store distribution).
+- Arch Linux ARM's rootfs is large (~450-500MB) and `pacman-key --init` /
+  `--populate` can take a while on first run — this is normal for Arch, not
+  a bug.
+- Rooted `chroot` mode assumes the device's `su` accepts the standard
+  `su -c "<command>"` calling convention (true for Magisk, SuperSU, and
+  KernelSU — the three most common root solutions).
+- `MANAGE_EXTERNAL_STORAGE` (used for `~/storage`) is a sensitive
+  permission Google Play restricts heavily for apps distributed through
+  the Play Store — fine for a personal/sideloaded APK like this one, but
+  worth knowing if you ever plan to publish it there.
+- Each session tab currently uses the same distro/root configuration
+  chosen on the picker screen; there's no per-tab distro switching yet
+  (would be a natural next step in `SessionManager.kt`).
 
-### Voice typing setup
+## Legal note
 
-Nothing to configure — it uses Android's built-in speech recognizer. The
-first time someone taps the mic icon, Android will ask for microphone
-permission (handled by a small invisible `VoicePermissionActivity`, since a
-keyboard service can't request runtime permissions itself).
-
-## Installing & enabling it on a phone
-
-1. Install the APK.
-2. Open the app → **"Enable in System Settings"** → turn on *Lumen Keyboard*.
-3. Tap **"Switch to Lumen Keyboard"** (or long-press the space bar) to make
-   it your active keyboard.
-4. **"Customize Appearance"** opens the in-app settings — the same screen is
-   also reachable from the system keyboard picker.
-
-## Publishing this publicly — a few pointers
-
-Since you mentioned this is for the public:
-- **Privacy policy**: see `PRIVACY.md` — a plain-language starting point
-  covering the mic, clipboard, and GIF-search network call. Play Store
-  requires a privacy policy URL for apps requesting microphone access; you'll
-  need to host this file's content somewhere public (a GitHub Pages link
-  to this file works fine) and link it in your Play Console listing.
-- **App name/branding**: see "Renaming / rebranding" below before you publish.
-- **Signing**: the CI workflow only builds a debug APK. For a Play Store
-  release you'll need a release keystore and signing config — happy to add
-  that (with the keystore itself kept out of the repo, as secrets) if/when
-  you're ready for that step.
-
-## Renaming / rebranding
-
-"Lumen" was picked for the "clean, glowing, professional" feel — but it's a
-placeholder if you want something else. Two quick alternatives if you'd like
-options: **Nimbus Keyboard** (soft, cloud-like) or **Cadence Keyboard**
-(emphasizing typing rhythm/flow). To rename:
-
-1. Find-and-replace `Lumen Keyboard` → your name in `strings.xml`.
-2. Find-and-replace the package `com.lumen.keyboard` → your own applicationId
-   (rename the `com/lumen/keyboard` folder to match, and update `namespace`/
-   `applicationId` in `app/build.gradle.kts`).
-3. Swap the accent color in `colors.xml` / `PreferencesManager.DEFAULT_ACCENT_HEX`.
-
-## Extending it
-
-- **New layout/language**: add a `KeyboardLayout` in `model/Layouts.kt`, then
-  wire a switch-key to call `keyboardView.setKeyboardLayout(...)`.
-- **Better dictionary/next-word prediction**: `WordDictionary`, `AutoCorrector`,
-  and `GestureTypingEngine` all read from the same offline word list — swap
-  in a frequency-ranked list (or an on-device ML model) and all three improve together.
-- **Smarter swipe typing**: `GestureTypingEngine` currently does ordered-subsequence
-  matching, not a weighted probability/geometry model — a good next step if
-  you want SwiftKey-level accuracy.
-- **More themes**: add a case to `Themes.forMode(...)` in `KeyboardTheme.kt`.
-- **More fonts**: drop another `.ttf` (with its license) into `assets/fonts/`
-  and add a line to `FontManager.builtIns`.
-- **More GIF providers**: `TenorApiClient` is a thin, isolated wrapper —
-  swap in GIPHY or another provider without touching the rest of the panel.
-- **True floating keyboard window**: would replace the "split" tablet mode
-  with a draggable/resizable `InputMethodService` window.
-
-## License
-
-MIT for this project's own code. Bundled fonts are SIL Open Font License 1.1
-(see `assets/fonts/licenses/`) — free for any use, but keep their license
-files if you redistribute them.
+This app downloads and runs the *official, unmodified* root filesystems
+published by Alpine, Canonical (Ubuntu), Debian, and Arch Linux ARM, plus
+the open-source `proot` tool — each under its own upstream license. No
+proprietary Termux code is used or redistributed.

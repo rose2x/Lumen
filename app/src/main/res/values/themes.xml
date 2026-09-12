@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Lumen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/lumen_primary</item>
-        <item name="colorPrimaryDark">@color/lumen_primary_dark</item>
-        <item name="colorAccent">@color/lumen_primary</item>
+    <style name="Theme.Vironix" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#00FF41</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="android:windowBackground">#0D0D0D</item>
+        <item name="android:statusBarColor">#000000</item>
     </style>
 </resources>
