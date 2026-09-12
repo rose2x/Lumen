@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.lumen.keyboard.SuggestionBar
+        android:id="@+id/suggestionBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+    <com.lumen.keyboard.GifResultsStrip
+        android:id="@+id/gifResultsStrip"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:visibility="gone" />
+
+    <com.lumen.keyboard.VoiceInputStrip
+        android:id="@+id/voiceInputStrip"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:visibility="gone" />
+
+    <com.lumen.keyboard.KeyboardView
+        android:id="@+id/keyboardView"
+        android:layout_width="match_parent"
+        android:layout_height="230dp" />
+
+    <com.lumen.keyboard.EmojiPanelView
+        android:id="@+id/emojiPanel"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:visibility="gone" />
+
+    <com.lumen.keyboard.ClipboardPanelView
+        android:id="@+id/clipboardPanel"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">Lumen Keyboard</string>
+    <string name="subtype_en_us">English (US)</string>
+    <string name="settings_title">Lumen Keyboard Settings</string>
+
+    <string name="main_title">Lumen Keyboard</string>
+    <string name="main_subtitle">A fast, elegant keyboard with a clean, professional design.</string>
+    <string name="btn_enable">1. Enable in System Settings</string>
+    <string name="btn_switch">2. Switch to Lumen Keyboard</string>
+    <string name="btn_customize">Customize Appearance</string>
+
+    <string name="pref_category_appearance">Appearance</string>
+    <string name="pref_category_feedback">Feedback</string>
+    <string name="pref_category_typing">Typing</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_sound_title">Key sounds</string>
+    <string name="pref_vibration_title">Key vibration</string>
+    <string name="pref_popup_title">Key preview popup</string>
+    <string name="pref_suggestions_title">Word suggestions</string>
+
+    <string name="clipboard_empty">Nothing copied yet. Anything you copy will show up here.</string>
+    <string name="gif_search_hint">Type to search GIFs</string>
+    <string name="gif_searching_for">Searching: %1$s</string>
+    <string name="gif_no_results">No results</string>
+    <string name="gif_not_supported">This field doesn\'t support inserting GIFs here</string>
+
+    <string name="pref_category_typing_extra">Advanced typing</string>
+    <string name="pref_autocorrect_title">Autocorrect</string>
+    <string name="pref_swipe_title">Swipe (gesture) typing</string>
+    <string name="pref_number_row_title">Always show number row</string>
+    <string name="pref_sound_style_title">Key sound style</string>
+    <string name="pref_accent_title">Accent color</string>
+    <string name="pref_height_title">Keyboard height</string>
+    <string name="pref_one_handed_title">One-handed mode</string>
+    <string name="pref_category_clipboard">Clipboard</string>
+    <string name="pref_clipboard_enabled_title">Save clipboard history</string>
+    <string name="pref_category_gif">GIFs</string>
+    <string name="pref_tenor_key_title">Tenor API key</string>
+    <string name="pref_tenor_key_summary">Free at tenor.com/gifapi. Leave blank to disable GIF search.</string>
+
+    <string name="voice_listening">Listening\u2026</string>
+    <string name="voice_idle">Tap the mic to speak</string>
+    <string name="voice_requesting_permission">Requesting microphone permission\u2026</string>
+    <string name="voice_permission_denied">Microphone permission denied</string>
+    <string name="voice_not_available">Voice typing isn\'t available on this device</string>
+    <string name="voice_no_match">Didn\'t catch that \u2014 try again</string>
+    <string name="voice_network_error">Network error \u2014 check your connection</string>
+    <string name="voice_generic_error">Voice typing error \u2014 try again</string>
+
+    <string name="pref_category_typography">Font</string>
+    <string name="pref_font_title">Keyboard font</string>
+    <string name="pref_font_import">Import a .ttf from my device\u2026</string>
+    <string name="font_imported">Font imported</string>
+    <string name="font_import_failed">Couldn\'t import that font file</string>
+
+    <string name="pref_category_background">Background</string>
+    <string name="pref_bg_choose_title">Choose background image</string>
+    <string name="pref_bg_clear_title">Remove background image</string>
+    <string name="bg_imported">Background image set</string>
+    <string name="bg_import_failed">Couldn\'t load that image</string>
+    <string name="bg_cleared">Background image removed</string>
+
+    <string name="pref_category_tablet">Tablet</string>
+    <string name="pref_split_title">Split keyboard</string>
+    <string name="pref_split_summary">Anchors letter keys to both edges, with a gap in the middle, for two-thumb typing</string>
+
+    <string name="pref_category_voice">Voice typing</string>
+    <string name="pref_voice_info_title">About voice typing</string>
+    <string name="pref_voice_info_summary">Tap the mic icon on the keyboard toolbar. Uses Android\'s built-in speech recognition \u2014 no account or extra app needed.</string>
+</resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="@string/pref_category_appearance">
+        <ListPreference
+            android:key="theme_mode"
+            android:title="@string/pref_theme_title"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="AUTO" />
+        <ListPreference
+            android:key="accent_color_hex"
+            android:title="@string/pref_accent_title"
+            android:entries="@array/accent_entries"
+            android:entryValues="@array/accent_values"
+            android:defaultValue="#4C6FFF" />
+        <SeekBarPreference
+            android:key="keyboard_height_percent"
+            android:title="@string/pref_height_title"
+            android:defaultValue="100"
+            android:min="80"
+            android:max="130"
+            app:showSeekBarValue="true" />
+        <ListPreference
+            android:key="one_handed_side"
+            android:title="@string/pref_one_handed_title"
+            android:entries="@array/one_handed_entries"
+            android:entryValues="@array/one_handed_values"
+            android:defaultValue="OFF" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_feedback">
+        <SwitchPreferenceCompat
+            android:key="sound_enabled"
+            android:title="@string/pref_sound_title"
+            android:defaultValue="false" />
+        <ListPreference
+            android:key="sound_style"
+            android:title="@string/pref_sound_style_title"
+            android:entries="@array/sound_style_entries"
+            android:entryValues="@array/sound_style_values"
+            android:defaultValue="STANDARD"
+            android:dependency="sound_enabled" />
+        <SwitchPreferenceCompat
+            android:key="vibration_enabled"
+            android:title="@string/pref_vibration_title"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="key_popup_enabled"
+            android:title="@string/pref_popup_title"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_typing">
+        <SwitchPreferenceCompat
+            android:key="suggestions_enabled"
+            android:title="@string/pref_suggestions_title"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="autocorrect_enabled"
+            android:title="@string/pref_autocorrect_title"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="swipe_typing_enabled"
+            android:title="@string/pref_swipe_title"
+            android:defaultValue="true" />
+        <SwitchPreferenceCompat
+            android:key="number_row_enabled"
+            android:title="@string/pref_number_row_title"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_typography">
+        <Preference
+            android:key="font_picker_launch"
+            android:title="@string/pref_font_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_background">
+        <Preference
+            android:key="background_image_launch"
+            android:title="@string/pref_bg_choose_title" />
+        <Preference
+            android:key="background_image_clear"
+            android:title="@string/pref_bg_clear_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_tablet">
+        <SwitchPreferenceCompat
+            android:key="split_keyboard_enabled"
+            android:title="@string/pref_split_title"
+            android:summary="@string/pref_split_summary"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_clipboard">
+        <SwitchPreferenceCompat
+            android:key="clipboard_history_enabled"
+            android:title="@string/pref_clipboard_enabled_title"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_gif">
+        <EditTextPreference
+            android:key="tenor_api_key"
+            android:title="@string/pref_tenor_key_title"
+            android:summary="@string/pref_tenor_key_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_voice">
+        <Preference
+            android:key="voice_info"
+            android:title="@string/pref_voice_info_title"
+            android:summary="@string/pref_voice_info_summary"
+            android:selectable="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

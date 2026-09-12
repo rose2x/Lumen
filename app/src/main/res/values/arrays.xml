@@ -1,0 +1,53 @@
+<resources>
+    <string-array name="theme_entries">
+        <item>Follow system</item>
+        <item>Light</item>
+        <item>Dark</item>
+        <item>AMOLED black</item>
+    </string-array>
+    <string-array name="theme_values">
+        <item>AUTO</item>
+        <item>LIGHT</item>
+        <item>DARK</item>
+        <item>AMOLED</item>
+    </string-array>
+
+    <string-array name="sound_style_entries">
+        <item>Standard</item>
+        <item>Soft click</item>
+        <item>Mechanical</item>
+    </string-array>
+    <string-array name="sound_style_values">
+        <item>STANDARD</item>
+        <item>SOFT</item>
+        <item>MECHANICAL</item>
+    </string-array>
+
+    <string-array name="accent_entries">
+        <item>Indigo blue</item>
+        <item>Emerald</item>
+        <item>Amber</item>
+        <item>Rose</item>
+        <item>Violet</item>
+        <item>Slate</item>
+    </string-array>
+    <string-array name="accent_values">
+        <item>#4C6FFF</item>
+        <item>#12B886</item>
+        <item>#F59F00</item>
+        <item>#E64980</item>
+        <item>#8B5CF6</item>
+        <item>#64748B</item>
+    </string-array>
+
+    <string-array name="one_handed_entries">
+        <item>Off</item>
+        <item>Left</item>
+        <item>Right</item>
+    </string-array>
+    <string-array name="one_handed_values">
+        <item>OFF</item>
+        <item>LEFT</item>
+        <item>RIGHT</item>
+    </string-array>
+</resources>
