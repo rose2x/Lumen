@@ -1,8 +1,0 @@
-<resources>
-    <color name="lumen_primary">#4C6FFF</color>
-    <color name="lumen_primary_dark">#3452D9</color>
-    <color name="lumen_background_light">#F5F6FA</color>
-    <color name="lumen_background_dark">#1B1C27</color>
-    <color name="lumen_text_light">#1C1D2B</color>
-    <color name="lumen_text_dark">#F2F2F7</color>
-</resources>
