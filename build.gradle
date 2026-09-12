@@ -1,8 +1,0 @@
-// build.gradle (Project level)
-// This is the top-level build file. It applies plugins that individual
-// modules (like "app") can then use, without configuring them yet.
-
-plugins {
-    id("com.android.application") version "8.5.2" apply false
-    id("org.jetbrains.kotlin.android") version "1.9.24" apply false
-}
