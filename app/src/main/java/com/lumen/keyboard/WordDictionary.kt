@@ -7,7 +7,7 @@ package com.lumen.keyboard
  */
 object WordDictionary {
 
-    private val words = listOf(
+    val words = listOf(
         "the", "be", "to", "of", "and", "a", "in", "that", "have", "it", "for", "not", "on", "with",
         "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
         "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if",
@@ -19,6 +19,10 @@ object WordDictionary {
         "yes", "no", "maybe", "really", "actually", "definitely", "probably", "meeting", "project", "email", "phone",
         "message", "call", "tonight", "morning", "afternoon", "evening", "weekend", "sorry", "awesome", "sounds"
     )
+
+    private val wordSet: Set<String> by lazy { words.toHashSet() }
+
+    fun contains(word: String): Boolean = wordSet.contains(word.lowercase())
 
     fun suggestionsFor(prefix: String, limit: Int = 3): List<String> {
         if (prefix.isBlank()) return emptyList()

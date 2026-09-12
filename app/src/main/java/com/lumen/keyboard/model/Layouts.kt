@@ -45,6 +45,13 @@ object Layouts {
         )
     )
 
+    private val numberRow = KeyRow(
+        listOf(c("1"), c("2"), c("3"), c("4"), c("5"), c("6"), c("7"), c("8"), c("9"), c("0"))
+    )
+
+    /** Same as [qwerty] but with a permanent number row on top. */
+    val qwertyWithNumberRow = KeyboardLayout(listOf(numberRow) + qwerty.rows)
+
     val symbols1 = KeyboardLayout(
         listOf(
             KeyRow(listOf(c("1"), c("2"), c("3"), c("4"), c("5"), c("6"), c("7"), c("8"), c("9"), c("0"))),
